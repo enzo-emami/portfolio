@@ -45,7 +45,7 @@ To replace a placeholder: drop the image in `assets/`, set `img`/`modalImg`.
 
 ## Still TODO
 
-- TBD Consulting + RAHIP: expand modal text with project specifics (preview
-  imagery is in; see the remaining TODO comments in the data arrays).
+- RAHIP: expand modal text with outcome details (see the TODO comment in the
+  data array).
 - Replace `assets/resume.pdf` with new versions as they ship — every resume
   button points at that one path.

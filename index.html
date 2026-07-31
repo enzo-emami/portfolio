@@ -429,6 +429,7 @@
       <div class="foot-contact">
         <a href="mailto:emamienzo@gmail.com">emamienzo@gmail.com</a>
         <a href="tel:9493176621">(949) 317-6621</a>
+        <a href="https://www.linkedin.com/in/enzo-e-b515a1251" target="_blank" rel="noopener">LinkedIn ↗</a>
         <a href="assets/resume.pdf" target="_blank" rel="noopener">Resume ↗</a>
         <span style="color: var(--text-muted); font-size: 15px;">SF Bay Area, CA</span>
       </div>
@@ -466,48 +467,6 @@ const ASSETS = "assets/";
 
 const projects = [
   {
-    id: "neurofocus",
-    title: "NeuroFocus — BCI Headset",
-    year: "2025 — now",
-    cats: ["robots", "cad"],
-    img: ASSETS + "neurofocus-card.png",
-    modalImg: ASSETS + "neurofocus-modal.png",
-    blurb: "Consumer EEG headset attachment for real-time focus tracking. I lead all mechanical & industrial design.",
-    tags: ["product design", "NURBS", "wearables"],
-    meta: "Chief Design Officer · sponsored by SPARTUP (SJSU) & Foothill Innovation Challenge",
-    text: [
-      "NeuroFocus is a sleek headset attachment that uses BCI technology to monitor EEG data, so gaming teams (and anyone chasing peak performance) can track focus levels in real time. Working with T1 Team Korea.",
-      "I own the hardware end to end: full NURBS-based product geometry, sensor integration into a lightweight ergonomic headset-mountable system, and every prototype iteration — independently.",
-      "With Elijah Chen & Inky Ganbold. Still in progress."
-    ],
-    links: [
-      { label: "Hardware journey (PDF)", href: "assets/neurofocus-hardware-journey.pdf" },
-      { label: "neurofocus.dev ↗", href: "https://www.neurofocus.dev/" },
-      { label: "GitHub ↗", href: "https://github.com/da-bigbrain" },
-      { label: "More details ↗", href: "https://emamienzo.wixstudio.com/my-site-2/about" }
-    ]
-  },
-  {
-    id: "drone",
-    title: "AI-Powered Drone — Infineon",
-    year: "2025",
-    cats: ["robots", "aero", "cad"],
-    img: ASSETS + "drone-card.png",
-    modalImg: ASSETS + "drone-modal.png",
-    blurb: "Car-rooftop drone that deploys to find parking autonomously. Sole mechanical designer among 5 picked from 20,000+ students.",
-    tags: ["enclosure design", "embedded", "R&D"],
-    meta: "R&D Hardware Designer · Infineon PSOC 6 sponsored project",
-    text: [
-      "Each quarter, De Anza selects a handful of students out of 20,000+ to build on a company-sponsored prototype AI chip (PSOC 6). Our concept: a drone that sits on your car's roof, deploys at the press of a button, finds parking autonomously, and lets the car self-drive to it.",
-      "As the sole mechanical/visual designer, I built the manufacturable NURBS enclosure on the HAWK'S WORK F450 platform — fastener strategy, PCB mounting, print-ready geometry — designed in Onshape.",
-      "With Mei Kuyusama, Nancy Ta, Aayush Sugali, and Isaac Zhi Kang."
-    ],
-    links: [
-      { label: "Project deck (PDF)", href: "assets/ai-drone-deck.pdf" },
-      { label: "More details ↗", href: "https://emamienzo.wixstudio.com/my-site-2/about" }
-    ]
-  },
-  {
     id: "frc",
     title: "FRC 2024 Robot — Team 6036",
     year: "2024",
@@ -521,7 +480,7 @@ const projects = [
     text: [
       "120 lb of competition robot, designed and built in 6–8 weeks. For Crescendo, ours drives on a highly agile swerve system, picks up Notes, and launches them into tall targets from anywhere on the field.",
       "A rotating turret and pivoting flywheel shooter give full aiming flexibility; Limelight cameras with AprilTag tracking make it automatic. Fast, accurate, and genuinely fun to drive.",
-      "This robot took us to the Archimedes Division Finals at the World Championship. Built alongside Rohit Seshadri and the 6036 CAD team."
+      "As CAD Lead I owned the robot's CAD end to end, built alongside Rohit Seshadri and the 6036 CAD team. This robot took us to the Archimedes Division Finals at the World Championship."
     ],
     links: [
       { label: "CAD release (Onshape) ↗", href: "https://cad.onshape.com/documents/b8e6794afb3a0d96fa312ae1/v/a47e847b9518dc43066543ac/e/1d767442ba2af50a6d55f05b?renderMode=0&uiState=66399353ce2b4002220e7e06" },
@@ -540,7 +499,8 @@ const projects = [
     tags: ["mechanism design", "CNC", "team lead"],
     meta: "Lead Designer · FIRST Tech Challenge · CENTERSTAGE",
     text: [
-      "Built with Ink & Metal 5773, a 15-member team in Fremont, CA. For CENTERSTAGE we engineered five integrated subsystems — chassis, intake, outtake, hang, and drone launcher — developed through repeated prototyping, CAD, and CNC manufacturing for reliable cycling under match pressure.",
+      "Built with Ink & Metal 5773, a 15-member team in Fremont, CA. For CENTERSTAGE we engineered five integrated subsystems — chassis, intake, outtake, hang, and drone launcher. Every mechanism ran the same pipeline: 3D-printed proof of concept, full CAD, then aluminum CNC manufacturing for reliable cycling under match pressure.",
+      "The hardest problem was the end effector: a two-claw deposit mechanism riding a virtual four-bar on three stages of diagonal linear slides, gripping game pieces by internal tension. It drops two pixels side-by-side in the time a generic dump drops one, and rotates to any orientation to score mosaic bonuses — the full iteration story is in the portfolio below.",
       "The robot performed across California, winning the San Mateo Regional and the 2024 RTX Innovate Sponsored Award."
     ],
     links: [
@@ -549,62 +509,64 @@ const projects = [
     ]
   },
   {
-    id: "fireflight",
-    title: "Fire-Flight — Wildfire UAV",
+    id: "drone",
+    title: "AI-Powered Drone — Infineon",
     year: "2025",
-    cats: ["aero", "robots"],
-    img: ASSETS + "fireflight-card.png",
-    modalImg: ASSETS + "fireflight-modal.png",
-    blurb: "Fixed-wing UAV for early wildfire detection — Pixhawk, Pi 4 vision, IR + PM2.5 sensing planned. Presented at UC Berkeley.",
-    tags: ["avionics", "sensing", "integration"],
-    meta: "Foothill Engineering Club · 2025 Bay Area Honors Research Symposium @ UC Berkeley",
+    cats: ["robots", "aero", "cad"],
+    img: ASSETS + "infineon-preview.png",
+    modalImg: ASSETS + "infineon-extra.png",
+    blurb: "Car-rooftop drone that deploys to find parking autonomously — it flew. Sole mechanical designer among 5 picked from 20,000+ students.",
+    tags: ["enclosure design", "embedded", "R&D"],
+    meta: "R&D Hardware Designer · Infineon PSOC 6 sponsored project",
     text: [
-      "Any potential fire in Los Altos Hills, this plane will find it. An ASA Aero aircraft demonstrating how advanced sensing and autonomous flight apply to wildfire detection.",
-      "The aircraft integrates a Pixhawk flight controller and GPS for navigation, with a Raspberry Pi 4 running a camera for real-time imaging. Future iterations add an infrared camera for hotspot detection and a PM2.5 sensor for smoke and air quality.",
-      "With Daniel Martinez, Francisco Plans, and Yahya Mirza."
+      "Each quarter, De Anza selects a handful of students out of 20,000+ to build on a company-sponsored prototype AI chip (PSOC 6). Ours: a drone that rides on your car's roof, deploys at the press of a button, finds an open spot using YOLO-based vision, and your car self-drives to it. By the time it lands, you're long gone shopping.",
+      "As the sole mechanical/visual designer, I built the manufacturable NURBS enclosure on the HAWK'S WORK F450 platform — fastener strategy, PCB mounting, print-ready geometry — designed in Onshape. Making it work wasn't enough: the shell went through printed and painted iterations until it was as sleek as it was flyable.",
+      "It flew. With Mei Kuyusama, Nancy Ta, Aayush Sugali, and Isaac Zhi Kang."
     ],
     links: [
-      { label: "Symposium deck (PDF)", href: "assets/fire-flight-deck.pdf" },
+      { label: "Project deck (PDF)", href: "assets/ai-drone-deck.pdf" },
       { label: "More details ↗", href: "https://emamienzo.wixstudio.com/my-site-2/about" }
     ]
   },
   {
-    id: "era",
-    title: "Emami Robotics Alliance",
+    id: "neurofocus",
+    title: "NeuroFocus — BCI Headset",
     year: "2025 — now",
-    cats: ["robots"],
-    img: ASSETS + "era-card.png",
-    modalImg: ASSETS + "era-modal.png",
-    blurb: "Founded a combat-robotics network: 12 teams across 2 campuses, ~10-school network, $10k+ in grants, 100+ students.",
-    tags: ["combat robotics", "founder", "events"],
-    meta: "Founder & Director · Foothill–De Anza district",
+    cats: ["robots", "cad"],
+    img: ASSETS + "neurofocus-card.png",
+    modalImg: ASSETS + "neurofocus-modal.png",
+    blurb: "Consumer EEG headset attachment for real-time focus tracking. I lead all mechanical & industrial design — working units, pre-orders open.",
+    tags: ["product design", "NURBS", "wearables"],
+    meta: "Chief Design Officer · backed by Founders, Inc. · sponsored by SPARTUP (SJSU) & Foothill Innovation Challenge",
     text: [
-      "I independently founded and lead a combat robotics competition program across the FHDA district — 12 competitive teams across two campuses, and a growing network of ~10 schools.",
-      "That means designing the competition architecture itself: technical rules, safety systems, and scalable event infrastructure for 100+ students. Working with the dean, I secured a dedicated lab space to teach CAD and mechanical design, and handled onboarding, registration, and competition logistics end-to-end — including registering teams for UC Berkeley's CRB competition.",
-      "Still running, still growing. $10k+ in grants secured."
+      "NeuroFocus is a sleek headset attachment that uses BCI technology to monitor EEG data, so gaming teams (and anyone chasing peak performance) can track focus levels in real time. Working with T1 Team Korea.",
+      "I own the hardware end to end: full NURBS-based product geometry, sensor integration into a lightweight ergonomic headset-mountable system, and every prototype iteration — ~350 hours of CAD and dozens of iterations, documented in the hardware journey below.",
+      "Backed by Founders, Inc. Working units are real — pre-orders are open at neurofocus.dev. With Elijah Chen & Inky Ganbold."
     ],
     links: [
-      { label: "deanzaexpo.org ↗", href: "https://deanzaexpo.org/#about-section" },
+      { label: "Hardware journey (PDF)", href: "assets/neurofocus-hardware-journey.pdf" },
+      { label: "neurofocus.dev ↗", href: "https://www.neurofocus.dev/" },
+      { label: "GitHub ↗", href: "https://github.com/da-bigbrain" },
       { label: "More details ↗", href: "https://emamienzo.wixstudio.com/my-site-2/about" }
     ]
   },
   {
     id: "tbd",
     title: "TBD Consulting",
-    year: "ongoing",
+    year: "2025 — now",
     cats: ["cad"],
     img: ASSETS + "tbd.png",
     modalImg: ASSETS + "tbd.png",
-    blurb: "CAD & custom fabrication business I co-founded. Client work has included AMD, Autodesk, and Pinkbike.",
-    tags: ["CAD", "fabrication", "co-founder"],
+    blurb: "Design consulting & custom fabrication I co-founded — paid client work for Pinkbike, AMD, and Autodesk, from concept CAD to physical production.",
+    tags: ["NURBS surfacing", "fabrication", "co-founder"],
     meta: "Co-founder · tbdmoto.com",
     text: [
-      "TBD is a CAD and custom fabrication business I co-founded with Dylan Banera — design-to-manufacture work taking client parts from concept through CAD to physical production.",
-      "Client work has included AMD, Autodesk, and Pinkbike."
-      /* TODO: add 1–2 specific client project descriptions + imagery when supplied */
+      "TBD is a CAD and custom fabrication business I co-founded with Dylan Banera — design consulting that takes client parts from concept through CAD to physical production. All of it paid client work, for Pinkbike, AMD, Autodesk, and others.",
+      "Pictured: a titanium frame junction for carbon-fiber tubing — a multi-constraint parametric NURBS surfacing problem balancing curvature continuity, fit tolerances, and a manufacturable interface between titanium and composite members, produced across 3D-printed and machined parts."
     ],
     links: [
-      { label: "tbdmoto.com ↗", href: "https://tbdmoto.com" }
+      { label: "tbdmoto.com ↗", href: "https://tbdmoto.com" },
+      { label: "More details ↗", href: "https://emamienzo.wixstudio.com/my-site-2/about" }
     ]
   },
   {
@@ -625,26 +587,48 @@ const projects = [
     links: []
   },
   {
-    id: "titanium",
-    title: "Titanium Frame Junction — TBD Bike",
-    year: "in progress",
-    cats: ["cad"],
-    img: ASSETS + "titanium-card.png",
-    modalImg: ASSETS + "titanium-modal.png",
-    blurb: "Parametric NURBS surfacing for a titanium junction joining carbon-fiber tubing — curvature continuity meets manufacturability.",
-    tags: ["NURBS", "surfacing", "manufacturing"],
-    meta: "TBD Consulting · parametric surfacing study",
+    id: "fireflight",
+    title: "Fire-Flight — Wildfire UAV",
+    year: "2025",
+    cats: ["aero", "robots"],
+    img: ASSETS + "fireflight-card.png",
+    modalImg: ASSETS + "fireflight-modal.png",
+    blurb: "Fixed-wing UAV for early wildfire detection — Pixhawk, Pi 4 vision, IR + PM2.5 sensing planned. Presented at UC Berkeley.",
+    tags: ["avionics", "sensing", "integration"],
+    meta: "Foothill Engineering Club · 2025 Bay Area Honors Research Symposium @ UC Berkeley",
     text: [
-      "Designing and parameterizing complex geometry for a titanium structural junction that integrates carbon-fiber tubing under tight spatial and mounting constraints.",
-      "The hard part is a multi-constraint surfacing problem: curvature continuity, fit tolerances, and a manufacturable interface between titanium and composite members — built as a fully parametric model, so dimensions can be iterated without breaking downstream mating surfaces."
+      "Any potential fire in Los Altos Hills, this plane will find it. An ASA Aero aircraft demonstrating how advanced sensing and autonomous flight apply to wildfire detection.",
+      "The aircraft integrates a Pixhawk flight controller and GPS for navigation, with a Raspberry Pi 4 running a camera for real-time imaging. Future iterations add an infrared camera for hotspot detection and a PM2.5 sensor for smoke and air quality.",
+      "With Daniel Martinez, Francisco Plans, and Yahya Mirza."
     ],
     links: [
+      { label: "Symposium deck (PDF)", href: "assets/fire-flight-deck.pdf" },
       { label: "More details ↗", href: "https://emamienzo.wixstudio.com/my-site-2/about" }
     ]
   }
 ];
 
 const community = [
+  {
+    id: "era",
+    title: "ERA — Intercollegiate Combat Robotics",
+    year: "2025 — now",
+    cats: ["community"],
+    img: ASSETS + "era-card.png",
+    modalImg: ASSETS + "era-modal.png",
+    blurb: "Intercollegiate combat-robotics competition I founded and funded — De Anza, Foothill, Mission, West Valley, Stanford — ~200 students, $10k first-season grant.",
+    tags: ["combat robotics", "founder", "events"],
+    meta: "Founder & Director · President, RAI Club @ De Anza",
+    text: [
+      "ERA is an intercollegiate combat-robotics competition I started — currently spanning De Anza College, Foothill College, Mission College, West Valley College, and Stanford University, and growing every quarter.",
+      "I funded it by unlocking grants — rewriting how my district processes them — landing a $10k grant for our first season. From there it's competition architecture: technical rules, safety systems, and event infrastructure for roughly 200 students across FHDA. I also serve as President of De Anza's Robotics & AI (RAI) Club.",
+      "Competition website under construction."
+    ],
+    links: [
+      { label: "deanzaexpo.org ↗", href: "https://deanzaexpo.org/#about-section" },
+      { label: "More details ↗", href: "https://emamienzo.wixstudio.com/my-site-2/about" }
+    ]
+  },
   {
     id: "dahacks",
     title: "DAHacks — Director",
