@@ -26,10 +26,8 @@ export function ShaderAnimation() {
     `
 
     // Fragment shader
-    // The ring pattern is always centered on the cursor (no falling back to
-    // screen-center), and the distance field feeding the bands is stretched
-    // along the cursor's recent velocity so the rings lean/elongate in the
-    // direction of travel instead of staying perfectly circular.
+    // The ring pattern is always centered on the cursor, plain circular
+    // distance (no directional stretch), cycling continuously over time.
     const fragmentShader = `
       #define TWO_PI 6.2831853072
       #define PI 3.14159265359
@@ -38,19 +36,11 @@ export function ShaderAnimation() {
       uniform vec2 resolution;
       uniform float time;
       uniform vec2 mouse;
-      uniform vec2 velocity;
 
       void main(void) {
         vec2 uv = (gl_FragCoord.xy * 2.0 - resolution.xy) / min(resolution.x, resolution.y);
         vec2 muv = (mouse * 2.0 - resolution.xy) / min(resolution.x, resolution.y);
-
-        vec2 d = uv - muv;
-        float speed = length(velocity);
-        vec2 dir = speed > 0.0001 ? velocity / speed : vec2(1.0, 0.0);
-        float along = dot(d, dir);
-        float perp = dot(d, vec2(-dir.y, dir.x));
-        float stretch = 1.0 + clamp(speed * 40.0, 0.0, 3.5);
-        float dist = length(vec2(along / stretch, perp));
+        float dist = length(uv - muv);
 
         float t = time*0.05;
         float lineWidth = 0.002;
@@ -77,7 +67,6 @@ export function ShaderAnimation() {
       time: { type: "f", value: 1.0 },
       resolution: { type: "v2", value: new THREE.Vector2() },
       mouse: { type: "v2", value: new THREE.Vector2() },
-      velocity: { type: "v2", value: new THREE.Vector2() },
     }
 
     const material = new THREE.ShaderMaterial({
@@ -108,43 +97,30 @@ export function ShaderAnimation() {
     window.addEventListener("resize", onWindowResize, false)
 
     // Pointer tracking: the ring center eases toward the pointer every frame,
-    // always — never falls back toward screen-center.
+    // always. Listens on window (not the container) so movement is tracked
+    // everywhere on the page, including over buttons/text stacked above the
+    // shader - but the target is clamped to the canvas's own bounds so the
+    // halo never drifts off-screen and stays visible near wherever you are.
     const targetMouse = new THREE.Vector2()
-    const prevMouse = new THREE.Vector2()
 
-    // Listen on window (not the container) so movement is tracked everywhere
-    // on the page, including over buttons/text stacked above the shader.
-    let moving = false
     const onPointerMove = (e: PointerEvent) => {
       const rect = container.getBoundingClientRect()
       const scaleX = renderer.domElement.width / rect.width
       const scaleY = renderer.domElement.height / rect.height
-      targetMouse.x = (e.clientX - rect.left) * scaleX
-      targetMouse.y = renderer.domElement.height - (e.clientY - rect.top) * scaleY
-      moving = true
+      const x = (e.clientX - rect.left) * scaleX
+      const y = renderer.domElement.height - (e.clientY - rect.top) * scaleY
+      targetMouse.x = Math.min(Math.max(x, 0), renderer.domElement.width)
+      targetMouse.y = Math.min(Math.max(y, 0), renderer.domElement.height)
     }
     window.addEventListener("pointermove", onPointerMove)
 
     // Animation loop
     const animate = () => {
       const animationId = requestAnimationFrame(animate)
-      // the ring cycle only advances on frames where the pointer actually
-      // moved, and advances much slower than before once it does
-      if (moving) {
-        uniforms.time.value += 0.02
-        moving = false
-      }
+      uniforms.time.value += 0.02
 
-      prevMouse.copy(uniforms.mouse.value)
       uniforms.mouse.value.x += (targetMouse.x - uniforms.mouse.value.x) * 0.08
       uniforms.mouse.value.y += (targetMouse.y - uniforms.mouse.value.y) * 0.08
-
-      // velocity in the same normalized space the shader uses for `uv`/`mouse`
-      const m = Math.min(uniforms.resolution.value.x, uniforms.resolution.value.y) || 1
-      const rawVx = ((uniforms.mouse.value.x - prevMouse.x) * 2.0) / m
-      const rawVy = ((uniforms.mouse.value.y - prevMouse.y) * 2.0) / m
-      uniforms.velocity.value.x += (rawVx - uniforms.velocity.value.x) * 0.25
-      uniforms.velocity.value.y += (rawVy - uniforms.velocity.value.y) * 0.25
 
       renderer.render(scene, camera)
 
