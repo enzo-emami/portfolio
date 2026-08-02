@@ -3,163 +3,208 @@
 import { useEffect, useRef } from "react"
 import * as THREE from "three"
 
+// Two-pass accumulation-buffer effect: a "sim" pass diffuses + decays the
+// previous frame and stamps fresh light along the segment the pointer just
+// traveled (only when it actually moved), then a "display" pass tonemaps
+// that buffer to the screen. There is no time-driven animation — every
+// visible pixel traces back to an actual pointer movement, fading and
+// spreading outward on its own afterward.
 export function ShaderAnimation() {
   const containerRef = useRef<HTMLDivElement>(null)
-  const sceneRef = useRef<{
-    camera: THREE.Camera
-    scene: THREE.Scene
-    renderer: THREE.WebGLRenderer
-    uniforms: any
-    animationId: number
-  } | null>(null)
 
   useEffect(() => {
     if (!containerRef.current) return
-
     const container = containerRef.current
 
-    // Vertex shader
-    const vertexShader = `
+    const passVertexShader = `
       void main() {
-        gl_Position = vec4( position, 1.0 );
+        gl_Position = vec4(position, 1.0);
       }
     `
 
-    // Fragment shader
-    // The ring pattern's own origin follows the cursor (blended in via `hover`)
-    // instead of always emanating from screen center.
-    const fragmentShader = `
-      #define TWO_PI 6.2831853072
-      #define PI 3.14159265359
-
+    const simFragmentShader = `
       precision highp float;
-      uniform vec2 resolution;
-      uniform float time;
-      uniform vec2 mouse;
-      uniform float hover;
+      uniform sampler2D uPrev;
+      uniform vec2 uResolution;
+      uniform vec2 uMouse;
+      uniform vec2 uMousePrev;
+      uniform float uIntensity;
 
-      void main(void) {
-        vec2 uv = (gl_FragCoord.xy * 2.0 - resolution.xy) / min(resolution.x, resolution.y);
-        vec2 muv = (mouse * 2.0 - resolution.xy) / min(resolution.x, resolution.y);
-        vec2 center = mix(vec2(0.0), muv, hover);
-        float t = time*0.05;
-        float lineWidth = 0.002;
+      float distToSegment(vec2 p, vec2 a, vec2 b) {
+        vec2 pa = p - a;
+        vec2 ba = b - a;
+        float h = clamp(dot(pa, ba) / max(dot(ba, ba), 1e-6), 0.0, 1.0);
+        return length(pa - ba * h);
+      }
 
-        vec3 color = vec3(0.0);
-        for(int j = 0; j < 3; j++){
-          for(int i=0; i < 5; i++){
-            color[j] += lineWidth*float(i*i) / abs(fract(t - 0.01*float(j)+float(i)*0.01)*5.0 - length(uv - center) + mod(uv.x+uv.y, 0.2));
-          }
-        }
+      void main() {
+        vec2 texUv = gl_FragCoord.xy / uResolution;
+        vec2 texel = 2.5 / uResolution;
 
-        gl_FragColor = vec4(color[0],color[1],color[2],1.0);
+        // diffuse: cheap 4-tap blur of the previous frame (spreads the glow outward)
+        vec3 prev = texture2D(uPrev, texUv).rgb * 0.55;
+        prev += texture2D(uPrev, texUv + vec2(texel.x, 0.0)).rgb * 0.1125;
+        prev += texture2D(uPrev, texUv - vec2(texel.x, 0.0)).rgb * 0.1125;
+        prev += texture2D(uPrev, texUv + vec2(0.0, texel.y)).rgb * 0.1125;
+        prev += texture2D(uPrev, texUv - vec2(0.0, texel.y)).rgb * 0.1125;
+
+        // decay: fades toward darkness over time
+        prev *= 0.982;
+
+        // stamp fresh light along the segment traveled this frame (zero when idle)
+        vec2 p = (gl_FragCoord.xy * 2.0 - uResolution) / min(uResolution.x, uResolution.y);
+        float d = distToSegment(p, uMousePrev, uMouse);
+        float stamp = smoothstep(0.06, 0.0, d) * uIntensity;
+
+        vec3 color = prev + stamp * vec3(0.55, 0.72, 1.0);
+        gl_FragColor = vec4(color, 1.0);
       }
     `
 
-    // Initialize Three.js scene
+    const displayFragmentShader = `
+      precision highp float;
+      uniform sampler2D uTexture;
+      uniform vec2 uResolution;
+
+      void main() {
+        vec2 uv = gl_FragCoord.xy / uResolution;
+        vec3 color = texture2D(uTexture, uv).rgb;
+        color = color / (1.0 + color); // soft tonemap so overlapping stamps don't clip harshly
+        gl_FragColor = vec4(color, 1.0);
+      }
+    `
+
     const camera = new THREE.Camera()
     camera.position.z = 1
-
-    const scene = new THREE.Scene()
     const geometry = new THREE.PlaneGeometry(2, 2)
 
-    const uniforms = {
-      time: { type: "f", value: 1.0 },
-      resolution: { type: "v2", value: new THREE.Vector2() },
-      mouse: { type: "v2", value: new THREE.Vector2() },
-      hover: { type: "f", value: 0.0 },
+    const simUniforms = {
+      uPrev: { value: null as THREE.Texture | null },
+      uResolution: { value: new THREE.Vector2() },
+      uMouse: { value: new THREE.Vector2() },
+      uMousePrev: { value: new THREE.Vector2() },
+      uIntensity: { value: 0 },
     }
-
-    const material = new THREE.ShaderMaterial({
-      uniforms: uniforms,
-      vertexShader: vertexShader,
-      fragmentShader: fragmentShader,
+    const simMaterial = new THREE.ShaderMaterial({
+      uniforms: simUniforms,
+      vertexShader: passVertexShader,
+      fragmentShader: simFragmentShader,
     })
+    const simScene = new THREE.Scene()
+    simScene.add(new THREE.Mesh(geometry, simMaterial))
 
-    const mesh = new THREE.Mesh(geometry, material)
-    scene.add(mesh)
+    const displayUniforms = {
+      uTexture: { value: null as THREE.Texture | null },
+      uResolution: { value: new THREE.Vector2() },
+    }
+    const displayMaterial = new THREE.ShaderMaterial({
+      uniforms: displayUniforms,
+      vertexShader: passVertexShader,
+      fragmentShader: displayFragmentShader,
+    })
+    const displayScene = new THREE.Scene()
+    displayScene.add(new THREE.Mesh(geometry, displayMaterial))
 
     const renderer = new THREE.WebGLRenderer({ antialias: true })
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-
     container.appendChild(renderer.domElement)
 
-    // Handle window resize
+    const rtOptions = {
+      minFilter: THREE.LinearFilter,
+      magFilter: THREE.LinearFilter,
+      format: THREE.RGBAFormat,
+      depthBuffer: false,
+      stencilBuffer: false,
+    }
+    let rtA = new THREE.WebGLRenderTarget(1, 1, rtOptions)
+    let rtB = new THREE.WebGLRenderTarget(1, 1, rtOptions)
+
+    const clearTarget = (rt: THREE.WebGLRenderTarget) => {
+      renderer.setRenderTarget(rt)
+      renderer.setClearColor(0x000000, 1)
+      renderer.clear()
+    }
+
+    const SIM_SCALE = 0.5 // sim buffer resolution relative to display; softens + speeds up diffusion
+
     const onWindowResize = () => {
       const width = container.clientWidth
       const height = container.clientHeight
       renderer.setSize(width, height)
-      uniforms.resolution.value.x = renderer.domElement.width
-      uniforms.resolution.value.y = renderer.domElement.height
+
+      const simW = Math.max(1, Math.floor(renderer.domElement.width * SIM_SCALE))
+      const simH = Math.max(1, Math.floor(renderer.domElement.height * SIM_SCALE))
+      rtA.setSize(simW, simH)
+      rtB.setSize(simW, simH)
+      simUniforms.uResolution.value.set(simW, simH)
+      displayUniforms.uResolution.value.set(renderer.domElement.width, renderer.domElement.height)
+
+      clearTarget(rtA)
+      clearTarget(rtB)
+      renderer.setRenderTarget(null)
     }
 
-    // Initial resize
     onWindowResize()
     window.addEventListener("resize", onWindowResize, false)
 
-    // Pointer tracking: eased toward target so the glow settles smoothly,
-    // and fades out entirely once the pointer leaves the container.
-    const targetMouse = new THREE.Vector2()
-    let targetHover = 0
+    const current = new THREE.Vector2()
+    const prevFrame = new THREE.Vector2()
+    let moveIntensity = 0
+
+    const toFieldSpace = (clientX: number, clientY: number) => {
+      const rect = container.getBoundingClientRect()
+      const fullW = renderer.domElement.width
+      const fullH = renderer.domElement.height
+      const px = (clientX - rect.left) * (fullW / rect.width)
+      const py = fullH - (clientY - rect.top) * (fullH / rect.height)
+      const m = Math.min(fullW, fullH)
+      return new THREE.Vector2((px * 2 - fullW) / m, (py * 2 - fullH) / m)
+    }
 
     const onPointerMove = (e: PointerEvent) => {
-      const rect = container.getBoundingClientRect()
-      const scaleX = renderer.domElement.width / rect.width
-      const scaleY = renderer.domElement.height / rect.height
-      targetMouse.x = (e.clientX - rect.left) * scaleX
-      targetMouse.y = renderer.domElement.height - (e.clientY - rect.top) * scaleY
-      targetHover = 1
+      current.copy(toFieldSpace(e.clientX, e.clientY))
+      moveIntensity = 1
     }
-    const onPointerLeave = () => {
-      targetHover = 0
-    }
-
     container.addEventListener("pointermove", onPointerMove)
-    container.addEventListener("pointerleave", onPointerLeave)
 
-    // Animation loop
+    let raf: number | null = null
     const animate = () => {
-      const animationId = requestAnimationFrame(animate)
-      uniforms.time.value += 0.05
-      uniforms.mouse.value.x += (targetMouse.x - uniforms.mouse.value.x) * 0.08
-      uniforms.mouse.value.y += (targetMouse.y - uniforms.mouse.value.y) * 0.08
-      uniforms.hover.value += (targetHover - uniforms.hover.value) * 0.06
-      renderer.render(scene, camera)
+      raf = requestAnimationFrame(animate)
 
-      if (sceneRef.current) {
-        sceneRef.current.animationId = animationId
-      }
+      simUniforms.uPrev.value = rtA.texture
+      simUniforms.uMouse.value.copy(current)
+      simUniforms.uMousePrev.value.copy(prevFrame)
+      simUniforms.uIntensity.value = moveIntensity
+
+      renderer.setRenderTarget(rtB)
+      renderer.render(simScene, camera)
+
+      displayUniforms.uTexture.value = rtB.texture
+      renderer.setRenderTarget(null)
+      renderer.render(displayScene, camera)
+
+      const tmp = rtA
+      rtA = rtB
+      rtB = tmp
+
+      prevFrame.copy(current)
+      moveIntensity *= 0.85 // "is moving" gate eases out within a few frames of the pointer stopping
     }
-
-    // Store scene references for cleanup
-    sceneRef.current = {
-      camera,
-      scene,
-      renderer,
-      uniforms,
-      animationId: 0,
-    }
-
-    // Start animation
     animate()
 
-    // Cleanup function
     return () => {
       window.removeEventListener("resize", onWindowResize)
       container.removeEventListener("pointermove", onPointerMove)
-      container.removeEventListener("pointerleave", onPointerLeave)
-
-      if (sceneRef.current) {
-        cancelAnimationFrame(sceneRef.current.animationId)
-
-        if (container && sceneRef.current.renderer.domElement) {
-          container.removeChild(sceneRef.current.renderer.domElement)
-        }
-
-        sceneRef.current.renderer.dispose()
-        geometry.dispose()
-        material.dispose()
+      if (raf !== null) cancelAnimationFrame(raf)
+      if (renderer.domElement.parentNode === container) {
+        container.removeChild(renderer.domElement)
       }
+      renderer.dispose()
+      geometry.dispose()
+      simMaterial.dispose()
+      displayMaterial.dispose()
+      rtA.dispose()
+      rtB.dispose()
     }
   }, [])
 
