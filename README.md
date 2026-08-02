@@ -1,51 +1,48 @@
 # emamienzo — portfolio
 
-Single-file portfolio site. No build step, no dependencies: `index.html` + `assets/`.
+Vite + React + TypeScript + Tailwind CSS (shadcn project structure). Hero background is an
+interactive Three.js shader (`src/components/ui/shader-animation.tsx`) that reacts to cursor hover.
 
-## One-time setup (before first push)
-
-The four project PDFs are already in `assets/`. The images and resume still live
-on the old Wix CDN — pull them down so the site is fully self-hosted:
+## Develop
 
 ```bash
-bash fetch_assets.sh
+npm install
+npm run dev
 ```
 
-This downloads ~18 images + `resume.pdf` into `assets/` (safe to re-run; it
-skips files that already exist). Do this **before** deleting the Wix site.
+## Build
+
+```bash
+npm run build   # type-checks + outputs to dist/
+npm run preview # serve the production build locally
+```
 
 ## Deploy
 
-Any static host works:
+Pushes to `main` trigger `.github/workflows/deploy.yml`, which builds the app and publishes it to
+GitHub Pages via GitHub's Actions integration. In the repo's **Settings → Pages**, "Source" must be
+set to **GitHub Actions** (not "Deploy from a branch") for this to take effect.
 
-- **GitHub Pages** — push, then Settings → Pages → deploy from branch (root).
-- **Vercel / Netlify** — import the repo, no build command, output dir `.`.
-
-Then point `emamienzo.com` at it.
+The Vite `base` in `vite.config.ts` is set to `/portfolio/` to match this repo's Pages URL
+(`https://enzo-emami.github.io/portfolio/`) — update it if the site ever moves to a custom domain
+or root-level Pages URL.
 
 ## Editing content
 
-All project copy, images, tags, and links live in one place: the `projects` and
-`community` arrays at the top of the `<script>` block in `index.html`. Each entry:
+All project copy, images, tags, and links live in `src/data/projects.ts` (`projects` and
+`community` arrays). Each entry:
 
-```js
+```ts
 {
   id: "...",           // unique, used to open the modal
   title, year, cats,   // cats drive the filter buttons
-  img, modalImg,       // paths under assets/ — set to null for the
-                       // "media pending" placeholder (TBD, RAHIP)
+  img, modalImg,       // paths under public/assets/ — set to null for the
+                        // "media pending" placeholder
   blurb, tags, meta,   // hover card + modal header
   text: [...],         // modal paragraphs
-  video,               // optional YouTube embed URL (see FRC)
-  links: [...]         // modal buttons (PDFs, external sites)
+  video,                // optional YouTube embed URL (see FRC)
+  links: [...]          // modal buttons (PDFs, external sites)
 }
 ```
 
-To replace a placeholder: drop the image in `assets/`, set `img`/`modalImg`.
-
-## Still TODO
-
-- RAHIP: expand modal text with outcome details (see the TODO comment in the
-  data array).
-- Replace `assets/resume.pdf` with new versions as they ship — every resume
-  button points at that one path.
+To replace a placeholder: drop the image in `public/assets/`, set `img`/`modalImg`.
