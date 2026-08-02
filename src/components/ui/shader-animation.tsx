@@ -26,8 +26,10 @@ export function ShaderAnimation() {
     `
 
     // Fragment shader
-    // The ring pattern's own origin follows the cursor (blended in via `hover`)
-    // instead of always emanating from screen center.
+    // The ring pattern is always centered on the cursor (no falling back to
+    // screen-center), and the distance field feeding the bands is stretched
+    // along the cursor's recent velocity so the rings lean/elongate in the
+    // direction of travel instead of staying perfectly circular.
     const fragmentShader = `
       #define TWO_PI 6.2831853072
       #define PI 3.14159265359
@@ -36,19 +38,27 @@ export function ShaderAnimation() {
       uniform vec2 resolution;
       uniform float time;
       uniform vec2 mouse;
-      uniform float hover;
+      uniform vec2 velocity;
 
       void main(void) {
         vec2 uv = (gl_FragCoord.xy * 2.0 - resolution.xy) / min(resolution.x, resolution.y);
         vec2 muv = (mouse * 2.0 - resolution.xy) / min(resolution.x, resolution.y);
-        vec2 center = mix(vec2(0.0), muv, hover);
+
+        vec2 d = uv - muv;
+        float speed = length(velocity);
+        vec2 dir = speed > 0.0001 ? velocity / speed : vec2(1.0, 0.0);
+        float along = dot(d, dir);
+        float perp = dot(d, vec2(-dir.y, dir.x));
+        float stretch = 1.0 + clamp(speed * 40.0, 0.0, 3.5);
+        float dist = length(vec2(along / stretch, perp));
+
         float t = time*0.05;
         float lineWidth = 0.002;
 
         vec3 color = vec3(0.0);
         for(int j = 0; j < 3; j++){
           for(int i=0; i < 5; i++){
-            color[j] += lineWidth*float(i*i) / abs(fract(t - 0.01*float(j)+float(i)*0.01)*5.0 - length(uv - center) + mod(uv.x+uv.y, 0.2));
+            color[j] += lineWidth*float(i*i) / abs(fract(t - 0.01*float(j)+float(i)*0.01)*5.0 - dist + mod(uv.x+uv.y, 0.2));
           }
         }
 
@@ -67,7 +77,7 @@ export function ShaderAnimation() {
       time: { type: "f", value: 1.0 },
       resolution: { type: "v2", value: new THREE.Vector2() },
       mouse: { type: "v2", value: new THREE.Vector2() },
-      hover: { type: "f", value: 0.0 },
+      velocity: { type: "v2", value: new THREE.Vector2() },
     }
 
     const material = new THREE.ShaderMaterial({
@@ -97,10 +107,10 @@ export function ShaderAnimation() {
     onWindowResize()
     window.addEventListener("resize", onWindowResize, false)
 
-    // Pointer tracking: eased toward target so the glow settles smoothly,
-    // and fades out entirely once the pointer leaves the container.
+    // Pointer tracking: the ring center eases toward the pointer every frame,
+    // always — never falls back toward screen-center.
     const targetMouse = new THREE.Vector2()
-    let targetHover = 0
+    const prevMouse = new THREE.Vector2()
 
     const onPointerMove = (e: PointerEvent) => {
       const rect = container.getBoundingClientRect()
@@ -108,22 +118,25 @@ export function ShaderAnimation() {
       const scaleY = renderer.domElement.height / rect.height
       targetMouse.x = (e.clientX - rect.left) * scaleX
       targetMouse.y = renderer.domElement.height - (e.clientY - rect.top) * scaleY
-      targetHover = 1
     }
-    const onPointerLeave = () => {
-      targetHover = 0
-    }
-
     container.addEventListener("pointermove", onPointerMove)
-    container.addEventListener("pointerleave", onPointerLeave)
 
     // Animation loop
     const animate = () => {
       const animationId = requestAnimationFrame(animate)
       uniforms.time.value += 0.05
+
+      prevMouse.copy(uniforms.mouse.value)
       uniforms.mouse.value.x += (targetMouse.x - uniforms.mouse.value.x) * 0.08
       uniforms.mouse.value.y += (targetMouse.y - uniforms.mouse.value.y) * 0.08
-      uniforms.hover.value += (targetHover - uniforms.hover.value) * 0.06
+
+      // velocity in the same normalized space the shader uses for `uv`/`mouse`
+      const m = Math.min(uniforms.resolution.value.x, uniforms.resolution.value.y) || 1
+      const rawVx = ((uniforms.mouse.value.x - prevMouse.x) * 2.0) / m
+      const rawVy = ((uniforms.mouse.value.y - prevMouse.y) * 2.0) / m
+      uniforms.velocity.value.x += (rawVx - uniforms.velocity.value.x) * 0.25
+      uniforms.velocity.value.y += (rawVy - uniforms.velocity.value.y) * 0.25
+
       renderer.render(scene, camera)
 
       if (sceneRef.current) {
@@ -147,7 +160,6 @@ export function ShaderAnimation() {
     return () => {
       window.removeEventListener("resize", onWindowResize)
       container.removeEventListener("pointermove", onPointerMove)
-      container.removeEventListener("pointerleave", onPointerLeave)
 
       if (sceneRef.current) {
         cancelAnimationFrame(sceneRef.current.animationId)
