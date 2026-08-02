@@ -112,6 +112,8 @@ export function ShaderAnimation() {
     const targetMouse = new THREE.Vector2()
     const prevMouse = new THREE.Vector2()
 
+    // Listen on window (not the container) so movement is tracked everywhere
+    // on the page, including over buttons/text stacked above the shader.
     const onPointerMove = (e: PointerEvent) => {
       const rect = container.getBoundingClientRect()
       const scaleX = renderer.domElement.width / rect.width
@@ -119,7 +121,7 @@ export function ShaderAnimation() {
       targetMouse.x = (e.clientX - rect.left) * scaleX
       targetMouse.y = renderer.domElement.height - (e.clientY - rect.top) * scaleY
     }
-    container.addEventListener("pointermove", onPointerMove)
+    window.addEventListener("pointermove", onPointerMove)
 
     // Animation loop
     const animate = () => {
@@ -159,7 +161,7 @@ export function ShaderAnimation() {
     // Cleanup function
     return () => {
       window.removeEventListener("resize", onWindowResize)
-      container.removeEventListener("pointermove", onPointerMove)
+      window.removeEventListener("pointermove", onPointerMove)
 
       if (sceneRef.current) {
         cancelAnimationFrame(sceneRef.current.animationId)
