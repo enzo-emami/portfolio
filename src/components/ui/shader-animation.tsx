@@ -131,7 +131,7 @@ export function ShaderAnimation() {
       // the ring cycle only advances on frames where the pointer actually
       // moved, and advances much slower than before once it does
       if (moving) {
-        uniforms.time.value += 0.008
+        uniforms.time.value += 0.02
         moving = false
       }
 
