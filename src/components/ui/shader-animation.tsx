@@ -114,19 +114,26 @@ export function ShaderAnimation() {
 
     // Listen on window (not the container) so movement is tracked everywhere
     // on the page, including over buttons/text stacked above the shader.
+    let moving = false
     const onPointerMove = (e: PointerEvent) => {
       const rect = container.getBoundingClientRect()
       const scaleX = renderer.domElement.width / rect.width
       const scaleY = renderer.domElement.height / rect.height
       targetMouse.x = (e.clientX - rect.left) * scaleX
       targetMouse.y = renderer.domElement.height - (e.clientY - rect.top) * scaleY
+      moving = true
     }
     window.addEventListener("pointermove", onPointerMove)
 
     // Animation loop
     const animate = () => {
       const animationId = requestAnimationFrame(animate)
-      uniforms.time.value += 0.05
+      // the ring cycle only advances on frames where the pointer actually
+      // moved, and advances much slower than before once it does
+      if (moving) {
+        uniforms.time.value += 0.008
+        moving = false
+      }
 
       prevMouse.copy(uniforms.mouse.value)
       uniforms.mouse.value.x += (targetMouse.x - uniforms.mouse.value.x) * 0.08
