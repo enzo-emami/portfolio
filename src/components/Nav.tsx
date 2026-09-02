@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const SECTIONS = ["work", "community", "contact"];
+const SECTIONS = ["work", "contact"];
 
 export function Nav() {
   const [active, setActive] = useState<string | null>(null);
@@ -37,7 +37,7 @@ export function Nav() {
               href={`#${id}`}
               data-spy={id}
             >
-              {id === "work" ? "Work" : id === "community" ? "Ventures" : "Contact"}
+              {id === "work" ? "Projects" : "Contact"}
             </a>
           ))}
           <a className="nav-resume" href="assets/resume.pdf" target="_blank" rel="noopener">
