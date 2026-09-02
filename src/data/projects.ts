@@ -1,231 +1,44 @@
-export type ProjectLink = { label: string; href: string };
+export type Link = { label: string; href: string };
+export type Project = { id:string; title:string; context:string; role:string; date:string; impact:string; tags:string[]; image:string; imageAlt:string; metric?:string; links:Link[]; story?:{label:string;title:string;body:string;image?:string;alt?:string}[] };
+const A = `${import.meta.env.BASE_URL}assets/`;
 
-export type Project = {
-  id: string;
-  title: string;
-  year: string;
-  cats: string[];
-  img: string | null;
-  modalImg: string | null;
-  blurb: string;
-  tags: string[];
-  meta?: string;
-  video?: string;
-  text: string[];
-  links: ProjectLink[];
-};
-
-const ASSETS = "assets/";
-
-export const projects: Project[] = [
-  {
-    id: "frc",
-    title: "FRC 2024 Robot — Team 6036",
-    year: "2024",
-    cats: ["robots"],
-    img: ASSETS + "frc-card.png",
-    modalImg: ASSETS + "frc-modal.png",
-    blurb:
-      "Swerve drive, rotating turret, flywheel shooter, AprilTag auto-aim. Archimedes Division finalist at Worlds — #4 globally.",
-    tags: ["mechanism design", "CNC", "vision"],
-    meta: "CAD Lead · FIRST Robotics Competition · Crescendo",
-    video: "https://www.youtube-nocookie.com/embed/xgZRuODJkmU",
-    text: [
-      "120 lb of competition robot, designed and built in 6–8 weeks. For Crescendo, ours drives on a highly agile swerve system, picks up Notes, and launches them into tall targets from anywhere on the field.",
-      "A rotating turret and pivoting flywheel shooter give full aiming flexibility; Limelight cameras with AprilTag tracking make it automatic. Fast, accurate, and genuinely fun to drive.",
-      "As CAD Lead I owned the robot's CAD end to end, built alongside Rohit Seshadri and the 6036 CAD team. This robot took us to the Archimedes Division Finals at the World Championship.",
-    ],
-    links: [
-      {
-        label: "CAD release (Onshape) ↗",
-        href: "https://cad.onshape.com/documents/b8e6794afb3a0d96fa312ae1/v/a47e847b9518dc43066543ac/e/1d767442ba2af50a6d55f05b?renderMode=0&uiState=66399353ce2b4002220e7e06",
-      },
-      { label: "team6036.com ↗", href: "https://www.team6036.com/robots/acoustic" },
-      { label: "More details ↗", href: "https://emamienzo.wixstudio.com/my-site-2/about" },
-    ],
-  },
-  {
-    id: "ftc",
-    title: "FTC 2024 Robot — 5773 Ink & Metal",
-    year: "2024",
-    cats: ["robots"],
-    img: ASSETS + "ftc-card.png",
-    modalImg: ASSETS + "ftc-modal.png",
-    blurb:
-      "Five integrated subsystems, iterated through CAD + CNC. Won the San Mateo Regional and the RTX Innovate Award.",
-    tags: ["mechanism design", "CNC", "team lead"],
-    meta: "Lead Designer · FIRST Tech Challenge · CENTERSTAGE",
-    text: [
-      "Built with Ink & Metal 5773, a 15-member team in Fremont, CA. For CENTERSTAGE we engineered five integrated subsystems — chassis, intake, outtake, hang, and drone launcher. Every mechanism ran the same pipeline: 3D-printed proof of concept, full CAD, then aluminum CNC manufacturing for reliable cycling under match pressure.",
-      "The hardest problem was the end effector: a two-claw deposit mechanism riding a virtual four-bar on three stages of diagonal linear slides, gripping game pieces by internal tension. It drops two pixels side-by-side in the time a generic dump drops one, and rotates to any orientation to score mosaic bonuses — the full iteration story is in the portfolio below.",
-      "The robot performed across California, winning the San Mateo Regional and the 2024 RTX Innovate Sponsored Award.",
-    ],
-    links: [
-      { label: "2024 States portfolio (PDF)", href: "assets/ftc-2024-states-portfolio.pdf" },
-      { label: "More details ↗", href: "https://emamienzo.wixstudio.com/my-site-2/about" },
-    ],
-  },
-  {
-    id: "drone",
-    title: "AI-Powered Drone — Infineon",
-    year: "2025",
-    cats: ["robots", "aero", "cad"],
-    img: ASSETS + "infineon-preview.png",
-    modalImg: ASSETS + "infineon-extra.png",
-    blurb:
-      "Car-rooftop drone that deploys to find parking autonomously — it flew. Sole mechanical designer among 5 picked from 20,000+ students.",
-    tags: ["enclosure design", "embedded", "R&D"],
-    meta: "R&D Hardware Designer · Infineon PSOC 6 sponsored project",
-    text: [
-      "Each quarter, De Anza selects a handful of students out of 20,000+ to build on a company-sponsored prototype AI chip (PSOC 6). Ours: a drone that rides on your car's roof, deploys at the press of a button, finds an open spot using YOLO-based vision, and your car self-drives to it. By the time it lands, you're long gone shopping.",
-      "As the sole mechanical/visual designer, I built the manufacturable NURBS enclosure on the HAWK'S WORK F450 platform — fastener strategy, PCB mounting, print-ready geometry — designed in Onshape. Making it work wasn't enough: the shell went through printed and painted iterations until it was as sleek as it was flyable.",
-      "It flew. With Mei Kuyusama, Nancy Ta, Aayush Sugali, and Isaac Zhi Kang.",
-    ],
-    links: [
-      { label: "Project deck (PDF)", href: "assets/ai-drone-deck.pdf" },
-      { label: "More details ↗", href: "https://emamienzo.wixstudio.com/my-site-2/about" },
-    ],
-  },
-  {
-    id: "neurofocus",
-    title: "NeuroFocus — BCI Headset",
-    year: "2025 — now",
-    cats: ["robots", "cad"],
-    img: ASSETS + "neurofocus-card.png",
-    modalImg: ASSETS + "neurofocus-modal.png",
-    blurb:
-      "Consumer EEG headset attachment for real-time focus tracking. I lead all mechanical & industrial design — working units, pre-orders open.",
-    tags: ["product design", "NURBS", "wearables"],
-    meta: "Chief Design Officer · backed by Founders, Inc. · sponsored by SPARTUP (SJSU) & Foothill Innovation Challenge",
-    text: [
-      "NeuroFocus is a sleek headset attachment that uses BCI technology to monitor EEG data, so gaming teams (and anyone chasing peak performance) can track focus levels in real time. Working with T1 Team Korea.",
-      "I own the hardware end to end: full NURBS-based product geometry, sensor integration into a lightweight ergonomic headset-mountable system, and every prototype iteration — ~350 hours of CAD and dozens of iterations, documented in the hardware journey below.",
-      "Backed by Founders, Inc. Working units are real — pre-orders are open at neurofocus.dev. With Elijah Chen & Inky Ganbold.",
-    ],
-    links: [
-      { label: "Hardware journey (PDF)", href: "assets/neurofocus-hardware-journey.pdf" },
-      { label: "neurofocus.dev ↗", href: "https://www.neurofocus.dev/" },
-      { label: "GitHub ↗", href: "https://github.com/da-bigbrain" },
-      { label: "More details ↗", href: "https://emamienzo.wixstudio.com/my-site-2/about" },
-    ],
-  },
-  {
-    id: "tbd",
-    title: "TBD Consulting",
-    year: "2025 — now",
-    cats: ["cad"],
-    img: ASSETS + "tbd.png",
-    modalImg: ASSETS + "tbd.png",
-    blurb:
-      "Design consulting & custom fabrication I co-founded — paid client work for Pinkbike, AMD, and Autodesk, from concept CAD to physical production.",
-    tags: ["NURBS surfacing", "fabrication", "co-founder"],
-    meta: "Co-founder · tbdmoto.com",
-    text: [
-      "TBD is a CAD and custom fabrication business I co-founded with Dylan Banera — design consulting that takes client parts from concept through CAD to physical production. All of it paid client work, for Pinkbike, AMD, Autodesk, and others.",
-      "Pictured: a titanium frame junction for carbon-fiber tubing — a multi-constraint parametric NURBS surfacing problem balancing curvature continuity, fit tolerances, and a manufacturable interface between titanium and composite members, produced across 3D-printed and machined parts.",
-    ],
-    links: [
-      { label: "tbdmoto.com ↗", href: "https://tbdmoto.com" },
-      { label: "More details ↗", href: "https://emamienzo.wixstudio.com/my-site-2/about" },
-    ],
-  },
-  {
-    id: "rahip",
-    title: "RAHIP — Crawlspace Robot",
-    year: "in progress",
-    cats: ["robots"],
-    img: ASSETS + "rahip-card.png",
-    modalImg: ASSETS + "rahip-modal.png",
-    blurb: "Crawlspace inspection robot built on the Magni platform, developed through the Foothill Incubator.",
-    tags: ["mobile robot", "integration"],
-    meta: "Foothill Incubator",
-    text: [
-      "A crawlspace inspection robot built on the Magni mobile platform, developed through the Foothill Incubator.",
-      "My work spans the platform conversion for tracked locomotion, the BOM, wiring diagrams, and BLE setup.",
-    ],
-    links: [],
-  },
-  {
-    id: "fireflight",
-    title: "Fire-Flight — Wildfire UAV",
-    year: "2025",
-    cats: ["aero", "robots"],
-    img: ASSETS + "fireflight-card.png",
-    modalImg: ASSETS + "fireflight-modal.png",
-    blurb:
-      "Fixed-wing UAV for early wildfire detection — Pixhawk, Pi 4 vision, IR + PM2.5 sensing planned. Presented at UC Berkeley.",
-    tags: ["avionics", "sensing", "integration"],
-    meta: "Foothill Engineering Club · 2025 Bay Area Honors Research Symposium @ UC Berkeley",
-    text: [
-      "Any potential fire in Los Altos Hills, this plane will find it. An ASA Aero aircraft demonstrating how advanced sensing and autonomous flight apply to wildfire detection.",
-      "The aircraft integrates a Pixhawk flight controller and GPS for navigation, with a Raspberry Pi 4 running a camera for real-time imaging. Future iterations add an infrared camera for hotspot detection and a PM2.5 sensor for smoke and air quality.",
-      "With Daniel Martinez, Francisco Plans, and Yahya Mirza.",
-    ],
-    links: [
-      { label: "Symposium deck (PDF)", href: "assets/fire-flight-deck.pdf" },
-      { label: "More details ↗", href: "https://emamienzo.wixstudio.com/my-site-2/about" },
-    ],
-  },
+export const featured: Project[] = [
+  { id:"neurofocus", title:"NeuroFocus BCI", context:"Founders, Inc. / Offseason 2", role:"Hardware & Product Design Lead", date:"2026", metric:"7 angles tested · 1°–15°", image:A+"neurofocus-modal.png", imageAlt:"NeuroFocus EEG headset electrode mounting concept and prototype", tags:["Wearables","Parametric CAD","Prototype testing"], impact:"Seven TPU pressure-angle prototypes and weekly player tests drove a shift from forehead-mounted electrodes to sensing integrated around the ear pad.", links:[{label:"Hardware Journey [PDF]",href:A+"neurofocus-hardware-journey.pdf"},{label:"Visit NeuroFocus ↗",href:"https://neurofocus.dev"}], story:[
+    {label:"Product",title:"EEG that fits the headset players already use",body:"NeuroFocus measures focus and fatigue from EEG signals while gamers use their existing headsets. During my involvement, I led hardware and product design for the headset-integrated sensing system.",image:A+"neurofocus-vertical.jpg",alt:"CAD study of a forehead-mounted electrode arm"},
+    {label:"Constraint",title:"Contact, comfort, compatibility",body:"EEG electrodes need repeatable skin contact; players need long-session comfort; and the attachment had to adapt to headsets NeuroFocus did not manufacture. Vertical and horizontal pivot architectures explored FP1/FP2 forehead sensing.",image:A+"neurofocus-prototype.jpg",alt:"Physical TPU prototype of the NeuroFocus electrode arm"},
+    {label:"Test",title:"Pressure became a controlled variable",body:"Seven printed TPU variants swept electrode pressure angle from 1° to 15°. A later extensible forehead band improved placement repeatability, but testing exposed the larger product problem: visible, headset-specific structure.",image:A+"neurofocus-testing.jpg",alt:"Multiple printed NeuroFocus pressure-angle prototypes being tested"},
+    {label:"Decision",title:"Move sensing to the ear pad",body:"Every gaming headset already applies controlled clamp force around the ear. We moved sensing into a concentric-ring electrode held by a sleeve around the stock cushion, preserving comfort while adapting to different ear-pad sizes.",image:A+"neurofocus-earpad.jpg",alt:"Ear-pad electrode ring and fabric sleeve concept"},
+    {label:"Outcome",title:"The geometry changed; the method survived",body:"Almost none of the original geometry survived the pivot. The validated method did: parametric CAD, real prints, player testing, and architecture decisions driven by contact and comfort.",image:A+"neurofocus-ear-pivot.jpg",alt:"Diagram explaining the pivot from forehead sensing to ear-pad sensing"}
+  ]},
+  { id:"tbd", title:"TBD Consulting — Client Hardware", context:"Independent design practice", role:"Founder & Head Designer", date:"Jan 2025–Present", metric:"$11K AMD engagement · 8+ projects", image:A+"tbd.png", imageAlt:"Titanium junction designed for carbon-fiber frame tubes", tags:["Client hardware","SLS","NURBS surfacing"], impact:"Closed an $11,000 AMD engagement and delivered SLS-printed tablet stands from CAD through manufactured parts; completed 8+ client engagements.", links:[{label:"Visit TBD ↗",href:"https://tbdmoto.com"}], story:[
+    {label:"Practice",title:"Paid design work delivered to real clients",body:"TBD is a project-based design practice I co-founded to deliver production-minded CAD, industrial design, and physical prototypes. Engagements have spanned NURBS surfacing, CAD, industrial design, and fabrication."},
+    {label:"Commercial outcome",title:"$11,000 AMD engagement",body:"For AMD’s AI Summit, we closed an $11,000 engagement to design and deliver SLS-printed tablet stands, carrying the hardware from requirements and CAD through manufactured parts."},
+    {label:"Shown",title:"Titanium / carbon frame junction",body:"This junction required continuous surfacing, fit across dissimilar members, and geometry compatible with printed and machined iterations. It is one example from 8+ completed client engagements."}
+  ]},
+  { id:"infineon", title:"Infineon — Computer-Vision Drone", context:"Infineon Technologies · PSoC 6", role:"R&D Hardware Designer", date:"Apr–Jun 2025", metric:"3 target use cases · flight-capable prototype", image:A+"infineon-preview.png", imageAlt:"CAD and physical prototype of the Infineon computer-vision drone enclosure", tags:["Enclosure design","Embedded packaging","DFA"], impact:"Designed and manufactured a Class-A enclosure that packaged PSoC 6 electronics, sensors, PCB mounts, fasteners, and assembly interfaces into a flight-capable prototype.", links:[{label:"Project Deck [PDF]",href:A+"ai-drone-deck.pdf"}], story:[
+    {label:"System",title:"A rooftop-deployed parking-search demonstrator",body:"The PSoC 6 platform was expanded toward commercial, law-enforcement, and safety use cases. Our working demonstration used computer vision to search for open parking from an F450 airframe.",image:A+"infineon-extra.png",alt:"Infineon drone enclosure development, electronics, and assembled prototype"},
+    {label:"Constraints",title:"The enclosure had to assemble, print, and fly",body:"The shell had to fit an existing airframe, preserve sensor visibility and assembly access, locate electronics securely, and remain practical to print."},
+    {label:"Design",title:"Surface design around real internals",body:"I developed the Class-A enclosure and integrated PCB mounts, sensor packaging, fasteners, and assembly interfaces. Printed and painted iterations exposed fit, access, and surface issues before final assembly."},
+    {label:"Outcome",title:"Integrated hardware, not a styling shell",body:"I wired the PSoC 6 electronics for the demo and packaged the system into an enclosure that assembled around the working hardware and flew as an integrated prototype."}
+  ]},
+  { id:"frc", title:"FRC 6036 — 2024 Competition Robot", context:"FIRST Robotics Competition", role:"Lead Robot Designer", date:"2024", metric:"7+ robots · 4 regional wins · top-4 Worlds", image:A+"frc-modal.png", imageAlt:"Full CAD assembly of Team 6036's 2024 competition robot", tags:["Mechanism design","System packaging","CNC"], impact:"Led the mechanical architecture of a 120 lb swerve robot with a quad-flywheel shooter and pivoting turret; the team finished top four at the FIRST World Championship.", links:[{label:"Watch Robot ↗",href:"https://youtu.be/xgZRuODJkmU?si=yvnoglMQZF5a75UA"},{label:"Open CAD [Onshape] ↗",href:"https://cad.onshape.com/documents/b8e6794afb3a0d96fa312ae1/v/a47e847b9518dc43066543ac/e/1d767442ba2af50a6d55f05b"}], story:[
+    {label:"System",title:"A complete robot in a 6–8 week build cycle",body:"Shooter, turret, intake, drivetrain, electronics, structure, mass, center of gravity, serviceability, and manufacturing all competed for the same 120 lb package.",image:A+"frc-modal.png",alt:"Full robot CAD showing the integrated drivetrain, turret, pivot, shooter, intake, structure, and electronics packaging"},
+    {label:"Architecture",title:"Quad flywheel, pivot, turret, swerve",body:"We paired a swerve drivetrain with a quad-flywheel shooter on a pivoting turret, creating wide aiming coverage while vision supplied target acquisition."},
+    {label:"Ownership",title:"Interfaces were the design problem",body:"As lead robot designer, I directed the mechanical architecture and CAD with the 6036 design team, resolving interfaces across subsystems and manufacturing."},
+    {label:"Result",title:"Competition validated the architecture",body:"The robot reached the Archimedes Division final at the FIRST World Championship. Across FIRST, I led mechanical architecture for 7+ competition robots; teams earned four regional wins."}
+  ]}
 ];
 
-export const community: Project[] = [
-  {
-    id: "era",
-    title: "ERA — Intercollegiate Combat Robotics",
-    year: "2025 — now",
-    cats: ["community"],
-    img: ASSETS + "era-card.png",
-    modalImg: ASSETS + "era-modal.png",
-    blurb:
-      "Intercollegiate combat-robotics competition I founded and funded — De Anza, Foothill, Mission, West Valley, Stanford — ~200 students, $10k first-season grant.",
-    tags: ["combat robotics", "founder", "events"],
-    meta: "Founder & Director · President, RAI Club @ De Anza",
-    text: [
-      "ERA is an intercollegiate combat-robotics competition I started — currently spanning De Anza College, Foothill College, Mission College, West Valley College, and Stanford University, and growing every quarter.",
-      "I funded it by unlocking grants — rewriting how my district processes them — landing a $10k grant for our first season. From there it's competition architecture: technical rules, safety systems, and event infrastructure for roughly 200 students across FHDA. I also serve as President of De Anza's Robotics & AI (RAI) Club.",
-      "Competition website under construction.",
-    ],
-    links: [
-      { label: "deanzaexpo.org ↗", href: "https://deanzaexpo.org/#about-section" },
-      { label: "More details ↗", href: "https://emamienzo.wixstudio.com/my-site-2/about" },
-    ],
-  },
-  {
-    id: "dahacks",
-    title: "DAHacks — Director",
-    year: "2025",
-    cats: ["community"],
-    img: ASSETS + "dahacks-card.webp",
-    modalImg: ASSETS + "dahacks-modal.png",
-    blurb:
-      "Cupertino's largest intercollegiate hackathon — funded, designed, and ran the event for 200 students and industry mentors.",
-    tags: ["events", "leadership"],
-    meta: "Director · De Anza College",
-    text: [
-      "DAHacks is Cupertino's largest intercollegiate hackathon, hosted yearly by De Anza College. As Director, I worked with a team of organizers and district admin to fund, design, and run the event — bringing together 200 students and field professionals.",
-      "More than a competition, it's a platform: workshops, mentors, and networks that outlast the weekend. With Manuel Moya and the De Anza Hacks team.",
-    ],
-    links: [
-      { label: "Event site ↗", href: "https://hackathon-horizon-website.vercel.app/" },
-      { label: "live.deanzahacks.com ↗", href: "https://live.deanzahacks.com/" },
-    ],
-  },
-  {
-    id: "k12",
-    title: "K12 Robotics — Founder & Teacher",
-    year: "2024 — now",
-    cats: ["community"],
-    img: ASSETS + "k12-card.png",
-    modalImg: ASSETS + "k12-modal.png",
-    blurb:
-      "Built a year-long LEGO SPIKE robotics program from scratch — self-made curriculum, dozens of students, an FLL competition team.",
-    tags: ["teaching", "curriculum", "FLL"],
-    meta: "Founder · Little Scholar after-school academy",
-    text: [
-      "Starting with just an idea, I launched a robotics program from scratch inside an after-school K12 academy — designing the curriculum, marketing the class, and growing enrollment until it became one of the center's most popular offerings.",
-      "Using LEGO SPIKE kits, I taught dozens of students the fundamentals of robotics and problem-solving through progressive, self-made challenges blending mechanical design, programming logic, and teamwork — and established a FIRST LEGO League (FLL) competition team.",
-      "The program still runs today and continues to grow.",
-    ],
-    links: [{ label: "littlescholar.school ↗", href: "https://www.littlescholar.school/" }],
-  },
+export const additional: Project[] = [
+  {id:"ftc",title:"FTC 5773 — Integrated Robot",context:"FIRST Tech Challenge",role:"Lead Designer",date:"2024",metric:"5 integrated subsystems",impact:"Took five subsystems from proof-of-concept through full CAD and CNC hardware; the team won the San Mateo Regional and RTX Innovate Award.",tags:["End effector","CNC","Integration"],image:A+"ftc-modal.png",imageAlt:"CAD and manufactured mechanisms on FTC Team 5773's robot",links:[{label:"States Portfolio [PDF]",href:A+"ftc-2024-states-portfolio.pdf"}]},
+  {id:"fireflight",title:"Fire-Flight — Wildfire UAV",context:"Foothill Engineering Club",role:"Hardware Integration",date:"2025",impact:"Integrated Pixhawk/GPS navigation and Raspberry Pi imaging into a fixed-wing wildfire-monitoring demonstrator; IR and PM2.5 sensing remained future scope.",tags:["Avionics","Imaging","Integration"],image:A+"fireflight-modal.png",imageAlt:"Fixed-wing Fire-Flight UAV and integrated avionics",links:[{label:"Symposium Deck [PDF]",href:A+"fire-flight-deck.pdf"}]},
+  {id:"rahip",title:"RAHIP — Crawlspace Robot",context:"Foothill Incubator",role:"Hardware Integration",date:"In progress",impact:"Converting a Magni mobile base toward tracked crawlspace inspection, covering mechanical conversion, BOM, wiring diagrams, and BLE setup.",tags:["Mobile robotics","Wiring","Prototyping"],image:A+"rahip-modal.png",imageAlt:"RAHIP crawlspace robot platform under development",links:[]}
+];
+export const ventures: Project[] = [
+  {id:"cherrypicker",title:"Cherrypicker",context:"Transfer-planning product",role:"Founder",date:"2026–Present",impact:"Built and launched a student-facing platform combining articulation rules, academic history, live course availability, and automated multi-quarter planning. Contracting discussions with Foothill–De Anza are active; sponsorship terms remain under negotiation.",tags:["Product systems","Data integration","Founder"],image:A+"neurofocus-card.png",imageAlt:"Abstract interface graphic for Cherrypicker",metric:"Institutional terms under negotiation",links:[{label:"Visit Cherrypicker ↗",href:"https://www.cherrypickerapp.net/landing"}]},
+  {id:"era",title:"Emami Robotics Alliance",context:"Bay Area intercollegiate robotics",role:"Founder",date:"Aug 2025–2026",impact:"Founded a 7-campus competition network for 100+ students, authored its technical and safety rules, and secured $10,000 in institutional funding.",tags:["Technical rules","Safety","Operations"],image:A+"era-modal.png",imageAlt:"Students and robots at an Emami Robotics Alliance event",metric:"7 campuses · 100+ students · $10K",links:[{label:"Visit ERA ↗",href:"https://enzo-emami.github.io/era/"}]}
+];
+export const leadership: Project[] = [
+  {id:"dahacks",title:"DAHacks",context:"Intercollegiate hackathon",role:"Director",date:"2025",impact:"Co-led funding, program design, and event delivery for a 200-person intercollegiate hackathon.",tags:["Program design","Operations"],image:A+"dahacks-card.webp",imageAlt:"Participants working at DAHacks",links:[{label:"Event site ↗",href:"https://hackathon-horizon-website.vercel.app/"}]},
+  {id:"k12",title:"K12 Robotics",context:"Little Scholar",role:"Founder & Teacher",date:"2024",impact:"Created a year-long LEGO SPIKE curriculum and launched a FIRST LEGO League team at an after-school academy.",tags:["Curriculum","Teaching"],image:A+"k12-card.png",imageAlt:"Students building LEGO SPIKE robots",links:[{label:"Little Scholar ↗",href:"https://www.littlescholar.school/"}]}
 ];
