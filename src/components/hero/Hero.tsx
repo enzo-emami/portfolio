@@ -14,8 +14,8 @@ export function Hero() {
         </div>
         <h1>Enzo Emami</h1>
         <p className="hero-sub">
-          I design and build physical products — from tested wearables and paid client hardware to
-          competition robots and embedded R&amp;D systems.
+          Hardware and product designer at <b>UC Berkeley</b> — from tested wearables and paid client
+          hardware to competition robots and embedded R&amp;D systems.
         </p>
         <div className="hero-cta">
           <a className="btn btn-resume-lg" href="assets/resume.pdf" target="_blank" rel="noopener">
@@ -40,7 +40,7 @@ export function Hero() {
           </a>
         </div>
         <div className="hero-context">
-          UC Berkeley College of Engineering · Robotics · CAD · Manufacturing · Product Systems
+          $11K AMD ENGAGEMENT · 7 PRESSURE ANGLES TESTED · 7+ ROBOTS · TOP-4 AT FIRST WORLDS
         </div>
       </div>
     </header>

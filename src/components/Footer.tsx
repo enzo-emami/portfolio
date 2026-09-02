@@ -14,7 +14,7 @@ export function Footer() {
             </div>
           </div>
           <div className="foot-contact">
-            <a href="mailto:emamienzo@gmail.com">emamienzo@gmail.com</a>
+            <a href="mailto:enzo.emami@berkeley.edu">enzo.emami@berkeley.edu</a>
             <a href="tel:9493176621">(949) 317-6621</a>
             <a href="https://www.linkedin.com/in/enzo-e-b515a1251" target="_blank" rel="noopener">
               LinkedIn ↗

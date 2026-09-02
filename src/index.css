@@ -299,6 +299,12 @@ h2 {
   padding: 6px 12px; cursor: pointer;
 }
 .modal-close:hover { color: var(--text-primary); border-color: var(--line-bright); }
+.card[style*="cherrypicker.svg"] .card-media, .card-media[style*="cherrypicker.svg"], .modal-img[style*="cherrypicker.svg"] { background-size: 110px; background-repeat: no-repeat; background-color: #111410; }
+.modal-gallery { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 22px; }
+.modal-gallery figure { margin: 0; border: 1px solid var(--line-subtle); background: #080b0f; }
+.modal-gallery img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+.modal-gallery figcaption { padding: 9px 11px 11px; color: var(--text-muted); font-family: var(--mono); font-size: 10px; line-height: 1.5; text-transform: uppercase; letter-spacing: .04em; }
+@media (max-width: 620px) { .modal-gallery { grid-template-columns: 1fr; } }
 
 /* ============ footer ============ */
 footer { border-top: 1px solid var(--line-subtle); background: var(--background-elevated); padding: 64px 0 48px; }

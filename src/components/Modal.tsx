@@ -28,7 +28,7 @@ export function Modal({ project, onClose }: { project: Project | null; onClose: 
     >
       {project && (
         <div className="modal-wrap">
-          <button className="modal-close" onClick={onClose}>
+          <button className="modal-close" onClick={onClose} aria-label="Close project details">
             ESC / CLOSE
           </button>
           <div className="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
@@ -46,6 +46,16 @@ export function Modal({ project, onClose }: { project: Project | null; onClose: 
                 {project.text.map((t, i) => (
                   <p key={i}>{t}</p>
                 ))}
+                {project.gallery && (
+                  <div className="modal-gallery">
+                    {project.gallery.map((item) => (
+                      <figure key={item.src}>
+                        <img src={item.src} alt={item.alt} loading="lazy" />
+                        <figcaption>{item.caption}</figcaption>
+                      </figure>
+                    ))}
+                  </div>
+                )}
                 {project.video && (
                   <div className="modal-video">
                     <iframe

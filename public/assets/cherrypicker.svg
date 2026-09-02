@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9 12" width="9" height="12" shape-rendering="crispEdges" role="img" aria-label="Cherrypicker">
+  <title>Cherrypicker</title>
+  <!--
+    THE CHERRYPICKER MARK. Pixel art on a 9 x 12 grid, one grid cell per SVG
+    unit, so it stays crisp at any size: at 52px the cell lands on 5.78px and
+    crispEdges keeps every edge hard rather than letting the browser
+    antialias the staircase into mush.
+
+    Deliberately NOT a PNG. The old /newlogo.png could not scale, could not be
+    recoloured, and shipped a raster at one size for every surface from a 26px
+    nav to a 140px onboarding hero.
+  -->
+  <!-- stem and leaf -->
+  <g fill="#067d2f">
+    <rect x="2" y="0" width="2" height="1"/>
+    <rect x="1" y="1" width="1" height="1"/>
+    <rect x="3" y="1" width="2" height="1"/>
+    <rect x="4" y="2" width="1" height="2"/>
+    <rect x="4" y="4" width="2" height="1"/>
+  </g>
+  <!-- body -->
+  <g fill="#ff0057">
+    <rect x="2" y="4" width="2" height="1"/>
+    <rect x="6" y="4" width="1" height="1"/>
+    <rect x="1" y="5" width="7" height="1"/>
+    <rect x="0" y="6" width="9" height="4"/>
+    <rect x="1" y="10" width="7" height="1"/>
+    <rect x="2" y="11" width="5" height="1"/>
+  </g>
+  <!-- eyes, each with a highlight in its top-right cell -->
+  <g fill="#000000">
+    <rect x="3" y="7" width="2" height="2"/>
+    <rect x="6" y="7" width="2" height="2"/>
+  </g>
+  <g fill="#ffffff">
+    <rect x="4" y="7" width="1" height="1"/>
+    <rect x="7" y="7" width="1" height="1"/>
+  </g>
+</svg>
