@@ -1,30 +1,46 @@
-import { useEffect, useState } from "react";
-import { additional, featured, leadership, ventures, type Project } from "./data/projects";
+import { useState } from "react";
+import { Nav } from "@/components/Nav";
+import { Hero } from "@/components/hero/Hero";
+import { ProjectGrid } from "@/components/ProjectGrid";
+import { CommunityGrid } from "@/components/CommunityGrid";
+import { Modal } from "@/components/Modal";
+import { Footer } from "@/components/Footer";
+import { projects, community } from "@/data/projects";
+import type { Project } from "@/data/projects";
 
-const external = (href:string) => href.startsWith("http");
-function ProjectLinks({links}:{links:Project["links"]}){return <div className="project-links">{links.map(l=><a key={l.href} href={l.href} target={external(l.href)?"_blank":undefined} rel={external(l.href)?"noreferrer":undefined}>{l.label}</a>)}</div>}
+export default function App() {
+  const [activeProject, setActiveProject] = useState<Project | null>(null);
 
-function FeaturedProject({project,index}:{project:Project;index:number}){
-  const [open,setOpen]=useState(false);
-  useEffect(()=>{if(location.hash===`#${project.id}`)setOpen(true)},[project.id]);
-  const toggle=()=>{setOpen(v=>!v);if(!open)history.replaceState(null,"",`#${project.id}`)};
-  return <article className={`feature feature-${index+1}`} id={project.id}>
-    <figure className="feature-media"><img src={project.image} alt={project.imageAlt} loading={index?"lazy":"eager"}/>{project.id==="tbd"&&<figcaption>Shown: titanium / carbon frame junction — a separate representative client engagement.</figcaption>}</figure>
-    <div className="feature-copy"><p className="eyebrow">{project.context}</p><h3>{project.title}</h3><p className="role">{project.role} <span>·</span> {project.date}</p>{project.metric&&<p className="metric">{project.metric}</p>}<p className="impact">{project.impact}</p><div className="tags">{project.tags.map(t=><span key={t}>{t}</span>)}</div><div className="actions"><button onClick={toggle} aria-expanded={open} aria-controls={`${project.id}-story`}>{open?"Close case study":"View case study"} <span aria-hidden>→</span></button><ProjectLinks links={project.links}/></div></div>
-    {open&&project.story&&<div className="case-study" id={`${project.id}-story`}><div className="case-head"><p className="eyebrow">Engineering story</p><h4>From constraint to outcome.</h4></div>{project.story.map((s,i)=><section className="story-step" key={s.title}>{s.image&&<img src={s.image} alt={s.alt||""} loading="lazy"/>}<div><p className="step-number">0{i+1} / {s.label}</p><h5>{s.title}</h5><p>{s.body}</p></div></section>)}<ProjectLinks links={project.links}/></div>}
-  </article>
-}
+  return (
+    <>
+      <Nav />
+      <Hero />
 
-function Card({project,quiet=false}:{project:Project;quiet?:boolean}){return <article className={`card ${quiet?"quiet":""}`}><img src={project.image} alt={project.imageAlt} loading="lazy"/><div className="card-copy"><p className="eyebrow">{project.context}</p><h3>{project.title}</h3><p className="role">{project.role} · {project.date}</p>{project.metric&&<p className="metric">{project.metric}</p>}<p className="impact">{project.impact}</p><div className="tags">{project.tags.map(t=><span key={t}>{t}</span>)}</div><ProjectLinks links={project.links}/></div></article>}
+      <section id="work">
+        <div className="wrap">
+          <div className="section-head">
+            <h2>Selected Hardware</h2>
+            <p className="section-note">
+              Hover a card for the short version — click for the full story, CAD, and links.
+            </p>
+          </div>
+          <ProjectGrid projects={projects} onOpen={setActiveProject} />
+        </div>
+      </section>
 
-export default function App(){
-  const [menu,setMenu]=useState(false); const base=import.meta.env.BASE_URL;
-  return <><header className="site-nav"><a className="brand" href="#top">Enzo Emami</a><button className="menu" onClick={()=>setMenu(!menu)} aria-expanded={menu} aria-label="Toggle navigation">Menu</button><nav className={menu?"open":""} aria-label="Primary"><a href="#work">Selected work</a><a href="#ventures">Ventures</a><a href="#about">About / Contact</a><a className="resume" href={`${base}assets/resume.pdf`} target="_blank" rel="noreferrer">Resume ↗</a></nav></header>
-  <main id="top"><section className="hero"><div className="hero-grid" aria-hidden="true"/><div className="hero-inner"><p className="eyebrow">Hardware / Product / Mechanical Design</p><h1>I design and build<br/><em>physical products.</em></h1><p className="hero-copy">Robotics, CAD, manufacturing, and product systems—from tested wearables to paid client hardware.</p><p className="berkeley">UC Berkeley · College of Engineering</p><div className="hero-actions"><a className="primary" href="#work">View selected work ↓</a><a href={`${base}assets/resume.pdf`} target="_blank" rel="noreferrer">Resume ↗</a></div></div></section>
-  <section className="proof" aria-label="Selected outcomes"><div><strong>$11K</strong><span>AMD engagement</span></div><div><strong>7</strong><span>pressure angles tested</span></div><div><strong>7+</strong><span>competition robots</span></div><div><strong>Top 4</strong><span>FIRST World Championship</span></div></section>
-  <section className="section" id="work"><div className="section-intro"><p className="eyebrow">01 / Selected hardware</p><h2>Built, tested, manufactured.</h2><p>Four projects that show the arc from an ambiguous physical problem to working hardware.</p></div><div className="featured-list">{featured.map((p,i)=><FeaturedProject project={p} index={i} key={p.id}/>)}</div></section>
-  <section className="section"><div className="section-intro"><p className="eyebrow">02 / Additional engineering</p><h2>Mechanisms and integration.</h2></div><div className="card-grid thirds">{additional.map(p=><Card project={p} key={p.id}/>)}</div></section>
-  <section className="section" id="ventures"><div className="section-intro"><p className="eyebrow">03 / Products & ventures</p><h2>Ownership beyond hardware.</h2><p>Founder work that demonstrates systems thinking, shipping, and institution-scale execution.</p></div><div className="card-grid">{ventures.map(p=><Card project={p} key={p.id}/>)}</div><div className="leadership-grid">{leadership.map(p=><Card project={p} quiet key={p.id}/>)}</div></section>
-  <section className="section about" id="about"><div><p className="eyebrow">04 / About</p><h2>Engineering decisions should survive contact with the real world.</h2></div><div><p>I’m Enzo Emami, a UC Berkeley College of Engineering student focused on mechanical design, product hardware, robotics, and manufacturing. I’m most useful where CAD, prototypes, testing, and delivery meet.</p><p className="tools">SolidWorks · Onshape · Creo · Fusion 360 · NURBS / Class-A surfacing · SLS · CNC · 3D printing · Design for assembly</p><div className="contact"><a href="mailto:emamienzo@gmail.com">emamienzo@gmail.com</a><a href="https://www.linkedin.com/in/enzo-e-b515a1251" target="_blank" rel="noreferrer">LinkedIn ↗</a><a href="https://github.com/enzo-emami" target="_blank" rel="noreferrer">GitHub ↗</a></div></div></section></main>
-  <footer><span>Enzo Emami · Hardware / Product / Mechanical Design</span><a href="#top">Back to top ↑</a></footer></>
+      <section id="community" style={{ paddingTop: 0 }}>
+        <div className="wrap">
+          <div className="section-head">
+            <h2>Products &amp; Ventures</h2>
+            <p className="section-note">Founder and leadership work, kept separate from the hardware portfolio.</p>
+          </div>
+          <CommunityGrid projects={community} onOpen={setActiveProject} />
+        </div>
+      </section>
+
+      <Footer />
+
+      <Modal project={activeProject} onClose={() => setActiveProject(null)} />
+    </>
+  );
 }
